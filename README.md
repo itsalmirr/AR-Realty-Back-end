@@ -1,79 +1,63 @@
-<a href="https://www.linkedin.com/in/almir-redzematovic-05b734201/" style="outline: none;"><img src="https://res.cloudinary.com/iamalmiir/image/upload/v1655748669/Linkedin-logo-png_ufs32u.png" alt="linkedin logo" style="float: left; margin-top: 10px;width: 180px;"/></a>
-<br />
-<br />
+# AR Realty API
 
-- Project Title: AR Realty App
-- Language: Python
-- Frameworks: Django, Resful Framework
-- Database: PostgreSQL
-- File storage: Cloudinary
-- Deployment: Digital Ocean
+Django REST API behind the AR Realty website: property listings, realtors, inquiries and user accounts, plus an admin panel where staff manage them.
 
-## Description
+**Stack:** Python 3.11 · Django 4.2 · Django REST Framework · Simple JWT · PostgreSQL · Cloudinary · Gunicorn
 
-As part of the AR Realty website, this is a back-end application that allows you to manage Django-powered websites through a web interface. You can achieve this by using the Django admin panel or sending HTTP requests to the API endpoints for specific actions. This app utilizes Cloudinary to fast and efficiently store media files for listings, realtors, users, and all other media related to the website.
+## Features
+
+- Published listings with up to six photos each, stored on Cloudinary and served six per page.
+- Quick search by address, city, state (name or abbreviation), ZIP code or title, and three random picks for a "more listings" section that exclude the listing being viewed.
+- JWT authentication with Simple JWT: registration with a profanity filter, and read, update and delete for the signed-in user's profile.
+- Listing inquiries for signed-in users, each visible only to the user who sent it, and public business inquiries.
+- Django admin with the JET theme for listings, realtors, inquiries and users; generated API docs at `/docs/` and an OpenAPI schema at `/openapi`.
+
+## API
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/token/`, `/api/token/refresh/` | | Obtain or refresh a JWT pair |
+| POST | `/api/user/register/` | | Register |
+| GET, PUT, DELETE | `/api/user/me/` | JWT | The signed-in user's profile |
+| GET | `/api/listings/` | | Published listings, six per page |
+| GET | `/api/listings/quicksearch/?q=` | | Search listings |
+| GET | `/api/listings/random/?slug=` | | Three random listings other than `slug` |
+| GET | `/api/listings/<slug>/` | | One listing |
+| GET | `/api/realtors/` | | Realtors |
+| GET | `/api/realtor/info/<slug>/`, `/api/realtor/listings/<slug>/` | | A realtor and their listings |
+| GET | `/api/inquiries/` | JWT | Your inquiries |
+| POST | `/api/inquiries/create` | JWT | Ask about a listing |
+| DELETE | `/api/inquiries/<listing-id>/` | JWT | Withdraw an inquiry |
+| POST | `/api/contact/business-inquiries/` | | Business inquiry |
+
+## Run locally
+
+You need PostgreSQL and a Cloudinary account.
+
+```sh
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env    # SECRET_KEY, DB_*, CLOUDINARY_* and the rest
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+The admin panel is at `/admin/`.
 
 ## Screenshots
 
-Admin Panel
-<img src="https://res.cloudinary.com/iamalmiir/image/upload/v1669624330/django_admin_panel1_et7wom.png" alt="Admin Panel 1" />
-<img src="https://res.cloudinary.com/iamalmiir/image/upload/v1669624442/django_admin_panel2_duuzsq.png" alt="Admin Panel 2" />
+Admin panel:
 
-## Instalation
+<img src="https://res.cloudinary.com/iamalmiir/image/upload/v1669624330/django_admin_panel1_et7wom.png" alt="AR Realty admin panel" />
+<img src="https://res.cloudinary.com/iamalmiir/image/upload/v1669624442/django_admin_panel2_duuzsq.png" alt="AR Realty admin panel" />
 
-> Please make sure to create your own .env file with all necessary credentials before you continue. [^1] [^2]
+## Layout
 
-[^1]: You can see `.env.example` file.
-[^2]: _Following commands are for Unix-like operating systems_
-
-Create virtual environment:
-
-```bash
-python -m venv ./venv
 ```
-
-Activate virtual environment:
-
-```bash
-source ./venv/bin/activate
+backend/    settings, URLs, WSGI and ASGI entry points
+listings/   listing model, search, pagination
+realtors/   realtor model and endpoints
+contacts/   listing and business inquiries
+users/      custom user model, registration, profanity filter
 ```
-
-Install all requirements:
-
-```bash
-pip install -r requirements.txt
-```
-
-## Technologies used
-
-- Django
-  - Django is a high-level Python web framework that enables rapid development of secure and maintainable websites.
-    Built by experienced developers, Django takes care of much of the hassle of web development. I highly encourage
-    you to read more [about Django](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Introduction).
-- Django REST framework
-
-  - Lets you create RESTful APIs: A way to transfer information between an interface and a database in a simple way.
-    DRF, as much as Django, makes everything simple and easier. Learn
-    more [here](https://www.django-rest-framework.org/).
-
-- PostgreSQL
-
-  - PostgreSQL is a powerful, open source object-relational database system. It has more than 15 years of active development
-    and a proven architecture that has earned it a strong reputation for reliability, data integrity, and correctness.
-    Learn more [here](https://www.postgresql.org/).
-
-- Digital Ocean
-
-  - DigitalOcean is a cloud platform that provides developers cloud services that help to deploy and scale applications
-    that run simultaneously on multiple computers. Learn more [here](https://www.digitalocean.com/).
-
-###
-
-![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54) ![Django](https://img.shields.io/badge/django-%23092E20.svg?style=flat&logo=django&logoColor=white) ![DjangoREST](https://img.shields.io/badge/DJANGO-REST-ff1709?style=flat&logo=django&logoColor=white&color=ff1709&labelColor=gray) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=flat&logo=postgresql&logoColor=white) ![DigitalOcean](https://img.shields.io/badge/Digital_Ocean-0080FF?style=flat&logo=DigitalOcean&logoColor=white)
-
-### Future development
-
-- In the future I aim to implement
-  - Functionality for managing rental listings.
-  - Image optimization when uploading
-  - More security measures
